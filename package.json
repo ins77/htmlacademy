@@ -1,0 +1,14 @@
+{
+  "name": "homeworks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "gh-pages -d dist"
+  },
+  "author": "dmitrii sukhinin",
+  "license": "ISC",
+  "devDependencies": {
+    "gh-pages": "^0.12.0"
+  }
+}
