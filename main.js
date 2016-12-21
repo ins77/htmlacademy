@@ -4,14 +4,14 @@
 if (window.Element && !Element.prototype.closest) {
   Element.prototype.closest =
   function(s) {
-      var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-          i,
-          el = this;
-      do {
-          i = matches.length;
-          while (--i >= 0 && matches.item(i) !== el) {};
-      } while ((i < 0) && (el = el.parentElement));
-      return el;
+    var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+        i,
+        el = this;
+    do {
+        i = matches.length;
+        while (--i >= 0 && matches.item(i) !== el) {};
+    } while ((i < 0) && (el = el.parentElement));
+    return el;
   };
 }
 
@@ -55,28 +55,33 @@ var data = [
 
 var itemsList = document.querySelector('.js-items-list');
 var selectProduct = document.querySelector('.js-select-product');
+var subs = document.querySelector('.js-subs');
 var selectedItem;
 
+// вывод списка продуктов в зависимости от введенного значения в инпут
 function renderItemsList(items, value) {
   var itemsListContent;
-  if (value[0]) {
-    itemsListContent = items.filter(function(item) {
-      return item.title.toLowerCase().indexOf(value.join().trim().toLowerCase()) == 0
-    }).map(function(item) {
+  // если value непустая строка
+  if (value) {
+    itemsListContent = items.filter(function(item) { // выбираем из массива объекты, начало значений которых равно введенному в инпут значению
+      return item.title.toLowerCase().indexOf(value.trim().toLowerCase()) == 0;
+    }).map(function(item) { // оборачиваем отфильтрованные значения в li
   		return '<li>' + item.title + '</li>';
     });
     // reduce выдает ошибку, если массив пустой
     if (itemsListContent.length > 0) {
-      itemsListContent = itemsListContent.reduce(function(a, b) {
+      itemsListContent = itemsListContent.reduce(function(a, b) { // суммируем мапированные значения
     	  return a + b;
       });
     }
+  // если value пустая строка
   } else {
     itemsListContent = '';
   }
   itemsList.innerHTML = itemsListContent;
 }
 
+// получить массив продуктов-заменителей, исходя из объекта продукта и веса
 function getSubs(product, weight) {
   weight = weight || 1;
   var subs = product.subs;
@@ -87,22 +92,22 @@ function getSubs(product, weight) {
   return array;
 }
 
-function getItemData(itemname) {
+// получить продукты из data, у которых data.title соответствуюет itemname
+function getItemData(data, itemname) {
   var itemData = data.filter(function(el) {
     return el.title == itemname;
   });
   return itemData[0];
 }
 
+// вывести название продукта и соответствующие ему продукты заменители с весом
 function printSubs(product, weight) {
-  var subs = getSubs(product, weight);
-  var subsBlock = document.querySelector('.subs');
+  var subsItems = getSubs(product, weight);
   var result = product.title + '. Продукты заменители:<br>';
-  subs.forEach(function(sub) {
+  subsItems.forEach(function(sub) {
 		result += '- ' + sub.title + ', ' + sub.amount + '<br>';
   })
-
-  subsBlock.innerHTML = result;
+  subs.innerHTML = result;
 }
 
 function productFactory(title, amount) {
@@ -112,15 +117,14 @@ function productFactory(title, amount) {
   }
 }
 
-function setActive(node) {
-  if (selectedItem) {
-    selectedItem.classList.remove('active');
-  }
-  selectedItem = node;
-  selectedItem.classList.add('active');
-}
-
-// renderItemsList(data);
+// если уже есть элемент с .active, то удалить у него .active, добавить нужному элементу .active
+// function setActive(node) {
+//   if (selectedItem) {
+//     selectedItem.classList.remove('active');
+//   }
+//   selectedItem = node;
+//   selectedItem.classList.add('active');
+// }
 
 itemsList.addEventListener('click', function(e) {
 	var target = e.target;
@@ -129,19 +133,15 @@ itemsList.addEventListener('click', function(e) {
   if (!itemsList.contains(li)) return;
   selectProduct.value = target.innerText;
   itemsList.innerHTML = '';
-  setActive(li);
-  printSubs(getItemData(target.innerText));
+  // setActive(li);
+  printSubs(getItemData(data, target.innerText));
 });
 
 selectProduct.addEventListener('keyup', function(e) {
-  var value = [this.value];
+  var value = this.value;
   renderItemsList(data, value);
-  if (e.keyCode == 27) {
+  if (e.keyCode == 27) { // если нажата esc
     this.value = '';
     itemsList.innerHTML = '';
   }
 });
-
-// selectProduct.addEventListener('focus', function(e) {
-//   this.addEventListener
-// });
