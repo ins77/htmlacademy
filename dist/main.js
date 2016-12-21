@@ -55,28 +55,33 @@ var data = [
 
 var itemsList = document.querySelector('.js-items-list');
 var selectProduct = document.querySelector('.js-select-product');
+var subs = document.querySelector('.js-subs');
 var selectedItem;
 
+// вывод списка продуктов в зависимости от введенного значения в инпут
 function renderItemsList(items, value) {
   var itemsListContent;
+  // если value непустая строка
   if (value) {
-    itemsListContent = items.filter(function(item) {
+    itemsListContent = items.filter(function(item) { // выбираем из массива объекты, начало значений которых равно введенному в инпут значению
       return item.title.toLowerCase().indexOf(value.trim().toLowerCase()) == 0;
-    }).map(function(item) {
+    }).map(function(item) { // оборачиваем отфильтрованные значения в li
   		return '<li>' + item.title + '</li>';
     });
     // reduce выдает ошибку, если массив пустой
     if (itemsListContent.length > 0) {
-      itemsListContent = itemsListContent.reduce(function(a, b) {
+      itemsListContent = itemsListContent.reduce(function(a, b) { // суммируем мапированные значения
     	  return a + b;
       });
     }
+  // если value пустая строка
   } else {
     itemsListContent = '';
   }
   itemsList.innerHTML = itemsListContent;
 }
 
+// получить массив продуктов-заменителей, исходя из объекта продукта и веса
 function getSubs(product, weight) {
   weight = weight || 1;
   var subs = product.subs;
@@ -87,22 +92,22 @@ function getSubs(product, weight) {
   return array;
 }
 
-function getItemData(itemname) {
+// получить продукты из data, у которых data.title соответствуюет itemname
+function getItemData(data, itemname) {
   var itemData = data.filter(function(el) {
     return el.title == itemname;
   });
   return itemData[0];
 }
 
+// вывести название продукта и соответствующие ему продукты заменители с весом
 function printSubs(product, weight) {
-  var subs = getSubs(product, weight);
-  var subsBlock = document.querySelector('.subs');
+  var subsItems = getSubs(product, weight);
   var result = product.title + '. Продукты заменители:<br>';
-  subs.forEach(function(sub) {
+  subsItems.forEach(function(sub) {
 		result += '- ' + sub.title + ', ' + sub.amount + '<br>';
   })
-
-  subsBlock.innerHTML = result;
+  subs.innerHTML = result;
 }
 
 function productFactory(title, amount) {
@@ -112,6 +117,7 @@ function productFactory(title, amount) {
   }
 }
 
+// если уже есть элемент с .active, то удалить у него .active, добавить нужному элементу .active
 // function setActive(node) {
 //   if (selectedItem) {
 //     selectedItem.classList.remove('active');
@@ -128,13 +134,13 @@ itemsList.addEventListener('click', function(e) {
   selectProduct.value = target.innerText;
   itemsList.innerHTML = '';
   // setActive(li);
-  printSubs(getItemData(target.innerText));
+  printSubs(getItemData(data, target.innerText));
 });
 
 selectProduct.addEventListener('keyup', function(e) {
   var value = this.value;
   renderItemsList(data, value);
-  if (e.keyCode == 27) {
+  if (e.keyCode == 27) { // если нажата esc
     this.value = '';
     itemsList.innerHTML = '';
   }
