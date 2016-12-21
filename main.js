@@ -53,15 +53,28 @@ var data = [
   }
 ];
 
-var productsList = document.querySelector('.products-list');
+var itemsList = document.querySelector('.js-items-list');
+var selectProduct = document.querySelector('.js-select-product');
 var selectedItem;
 
-function createProductsList(products) {
-  productsList.innerHTML = products.map(function(product) {
-		return '<li><b>' + product.title + '</b></li>';
-  }).reduce(function(a, b) {
-	  return a + b;
-  });
+function renderItemsList(items, value) {
+  var itemsListContent;
+  if (value[0]) {
+    itemsListContent = items.filter(function(item) {
+      return item.title.toLowerCase().indexOf(value.join().trim().toLowerCase()) == 0
+    }).map(function(item) {
+  		return '<li>' + item.title + '</li>';
+    });
+    // reduce выдает ошибку, если массив пустой
+    if (itemsListContent.length > 0) {
+      itemsListContent = itemsListContent.reduce(function(a, b) {
+    	  return a + b;
+      });
+    }
+  } else {
+    itemsListContent = '';
+  }
+  itemsList.innerHTML = itemsListContent;
 }
 
 function getSubs(product, weight) {
@@ -107,13 +120,28 @@ function setActive(node) {
   selectedItem.classList.add('active');
 }
 
-createProductsList(data);
+// renderItemsList(data);
 
-productsList.addEventListener('click', function(e) {
+itemsList.addEventListener('click', function(e) {
 	var target = e.target;
   var li = target.closest('li');
   if (!li) return;
-  if (!productsList.contains(li)) return;
+  if (!itemsList.contains(li)) return;
+  selectProduct.value = target.innerText;
+  itemsList.innerHTML = '';
   setActive(li);
   printSubs(getItemData(target.innerText));
 });
+
+selectProduct.addEventListener('keyup', function(e) {
+  var value = [this.value];
+  renderItemsList(data, value);
+  if (e.keyCode == 27) {
+    this.value = '';
+    itemsList.innerHTML = '';
+  }
+});
+
+// selectProduct.addEventListener('focus', function(e) {
+//   this.addEventListener
+// });
