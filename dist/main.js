@@ -4,14 +4,14 @@
 if (window.Element && !Element.prototype.closest) {
   Element.prototype.closest =
   function(s) {
-      var matches = (this.document || this.ownerDocument).querySelectorAll(s),
-          i,
-          el = this;
-      do {
-          i = matches.length;
-          while (--i >= 0 && matches.item(i) !== el) {};
-      } while ((i < 0) && (el = el.parentElement));
-      return el;
+    var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+        i,
+        el = this;
+    do {
+        i = matches.length;
+        while (--i >= 0 && matches.item(i) !== el) {};
+    } while ((i < 0) && (el = el.parentElement));
+    return el;
   };
 }
 
@@ -59,9 +59,9 @@ var selectedItem;
 
 function renderItemsList(items, value) {
   var itemsListContent;
-  if (value[0]) {
+  if (value) {
     itemsListContent = items.filter(function(item) {
-      return item.title.toLowerCase().indexOf(value.join().trim().toLowerCase()) == 0
+      return item.title.toLowerCase().indexOf(value.trim().toLowerCase()) == 0;
     }).map(function(item) {
   		return '<li>' + item.title + '</li>';
     });
@@ -112,15 +112,13 @@ function productFactory(title, amount) {
   }
 }
 
-function setActive(node) {
-  if (selectedItem) {
-    selectedItem.classList.remove('active');
-  }
-  selectedItem = node;
-  selectedItem.classList.add('active');
-}
-
-// renderItemsList(data);
+// function setActive(node) {
+//   if (selectedItem) {
+//     selectedItem.classList.remove('active');
+//   }
+//   selectedItem = node;
+//   selectedItem.classList.add('active');
+// }
 
 itemsList.addEventListener('click', function(e) {
 	var target = e.target;
@@ -129,19 +127,15 @@ itemsList.addEventListener('click', function(e) {
   if (!itemsList.contains(li)) return;
   selectProduct.value = target.innerText;
   itemsList.innerHTML = '';
-  setActive(li);
+  // setActive(li);
   printSubs(getItemData(target.innerText));
 });
 
 selectProduct.addEventListener('keyup', function(e) {
-  var value = [this.value];
+  var value = this.value;
   renderItemsList(data, value);
   if (e.keyCode == 27) {
     this.value = '';
     itemsList.innerHTML = '';
   }
 });
-
-// selectProduct.addEventListener('focus', function(e) {
-//   this.addEventListener
-// });
