@@ -45,6 +45,13 @@ var data = [
     }
   },
   {
+    title: 'Кот',
+    subs: {
+      'Собака': 10,
+      'Кролик': 20
+    }
+  },
+  {
     title: 'Миндаль',
     subs: {
       'Грецкий орех': 10,
@@ -118,13 +125,13 @@ function productFactory(title, amount) {
 }
 
 // если уже есть элемент с .active, то удалить у него .active, добавить нужному элементу .active
-// function setActive(node) {
-//   if (selectedItem) {
-//     selectedItem.classList.remove('active');
-//   }
-//   selectedItem = node;
-//   selectedItem.classList.add('active');
-// }
+function setActive(node) {
+  if (selectedItem) {
+    selectedItem.classList.remove('active');
+  }
+  selectedItem = node;
+  selectedItem.classList.add('active');
+}
 
 itemsList.addEventListener('click', function(e) {
 	var target = e.target;
